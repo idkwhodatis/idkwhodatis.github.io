@@ -3,6 +3,7 @@ import './assets/main.css'
 import {createApp} from 'vue'
 import App from './App.vue'
 import router from './router'
+import {createPinia} from 'pinia'
 
 import {Quasar} from 'quasar'
 import '@quasar/extras/roboto-font/roboto-font.css'
@@ -12,7 +13,12 @@ import 'quasar/src/css/index.sass'
 
 const app=createApp(App)
 
+app.config.globalProperties.offset=60
+
 app.use(router)
+
+const pinia=createPinia()
+app.use(pinia)
 
 app.use(Quasar,{
     plugins:{},// import Quasar plugins and add here
@@ -28,6 +34,7 @@ app.use(Quasar,{
       // ..and many more (check Installation card on each Quasar component/directive/plugin)
     }
     */
-  })
+  }
+)
 
 app.mount('#app')
