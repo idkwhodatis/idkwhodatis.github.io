@@ -1,12 +1,12 @@
 <template>
-  <q-layout view="hHh lpR fFf" @scroll="(details)=>handleScroll(details)">
+  <q-layout view="hHh lpR fFf">
     <q-header elevated class="bg-primary text-white" style="height:60px">
       <TopBar/>
     </q-header>
 
     <q-page-container class="bg-primary text-white">
       <RouterView v-slot="{Component}">
-        <component :is="Component" :ref="currComponent"/>
+        <component :is="Component"/>
       </RouterView>
     </q-page-container>
   </q-layout>
@@ -22,17 +22,11 @@ export default{
   },
   data(){
     return {
-      currComponent:'home'
     }
   },
   mounted(){
   },
   methods:{
-    handleScroll(details){
-      if(this.currComponent==='home'){
-        this.$refs.home.handleScroll(details);
-      }
-    }
   }
 };
 </script>

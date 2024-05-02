@@ -22,9 +22,8 @@
     </q-card-section>
   </q-card>
 
-  <q-dialog v-model="imgDialog" >
-    <q-img :src="preview" class="rounded-borders" fit="contain" style="max-width:90vw;max-height:90vh"/>
-    <q-btn @click="imgDialog=false" flat round :ripple="false" color="white" icon="close" class="self-center self-end"/>
+  <q-dialog v-model="imgDialog" full-height full-width auto-close>
+    <q-img :src="preview" class="rounded-borders self-center" fit="contain" style="max-width:75vw;max-height:80vh"/>
   </q-dialog>
 </template>
 

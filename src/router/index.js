@@ -22,7 +22,13 @@ const router=createRouter({
       name:'404',
       component:()=>import('../views/404View.vue')
     }
-  ]
+  ],
+  scrollBehavior(to,from,savedPosition){
+    if (to.path==='/'){
+      return {top:0,left:0};
+    }
+    return savedPosition||{top:0,left:0};
+  }
 })
 
 export default router

@@ -2,18 +2,19 @@
   <q-page>
     <section ref="home" class="section column">
 		  <div class="flex-grow" style="flex-grow:3"></div>
-      <q-btn @click="scrollTo(this.projectPos)" round icon="arrow_downward" :ripple="false" class="self-center self-end no-hover" style="padding-bottom:1%;"/>
+      <p class="text-h1 text-weight-medium self-center">idkwhodatis</p>
+		  <div class="flex-grow" style="flex-grow:3"></div>
+      <q-btn @click="scrollTo(false)" round icon="arrow_downward" :ripple="false" class="self-center self-end no-hover" style="padding-bottom:1%;"/>
     </section>
-
     
-    <q-tabs v-model="tab" no-caps class="text-white shadow-2">
-      <q-tab name="all" label="All" :ripple="false"/>
-      <q-tab name="software" label="Software" :ripple="false"/>
-      <q-tab name="game" label="Game" :ripple="false"/>
-      <q-tab name="music" label="Music" :ripple="false"/>
-    </q-tabs>
-    <q-scroll-area dark class="section bg-dark text-white rounded-borders">
+    <q-scroll-area ref="scroll" dark class="section bg-dark text-white rounded-borders">
       <section ref="projects">
+        <q-tabs v-model="tab" no-caps class="text-white shadow-2">
+          <q-tab name="all" label="All" :ripple="false"/>
+          <q-tab name="software" label="Software" :ripple="false"/>
+          <q-tab name="game" label="Game" :ripple="false"/>
+          <q-tab name="music" label="Music" :ripple="false"/>
+        </q-tabs>
         <div class="q-pa-md row justify-center q-gutter-xl">
           <Project v-for="i in display" :project="i" :key="i.id"/>
         </div>
@@ -27,12 +28,11 @@
 </template>
 
 <script>
-import {nextTick} from 'vue'
 import ky from 'ky';
 import Project from '../components/Project.vue'
-import {date,scroll} from 'quasar'
+import {date,throttle} from 'quasar'
 const {extractDate}=date
-const {getScrollTarget,getVerticalScrollPosition,setVerticalScrollPosition}=scroll
+import bus from '../utils/EventBus.js'
 
 export default{
   components:{
@@ -41,7 +41,6 @@ export default{
   data(){
     return {
       tab:'all',
-      projectPos:0,
       projects:[],
       software:[],
       game:[],
@@ -49,20 +48,33 @@ export default{
     }
   },
   methods:{
-    scrollTo(pos){
-      window.scrollTo({top:pos-this.offset,behavior:'smooth'});
-    },
-    async handleScroll(details){
-      await nextTick();
-      if(details.position-details.delta===0&&details.direction==='down'){
-        // this.scrollTo(this.projectPos+window.scrollY);
+    scrollTo(toHome){
+      let pos;
+      if(toHome){
+        pos=0;
+      }else{
         const el=this.$refs.projects;
-        setVerticalScrollPosition(getScrollTarget(el),el.offsetTop,1000);
-      }else if(details.position-details.delta===this.projectPos&&details.direction==='up'){
-        console.log(details);
-        this.scrollTo(0);
+        if(el){
+          pos=el.getBoundingClientRect().top+this.scrollOffset;
+        }
       }
-      console.log(details);
+      window.scrollTo({top:pos,behavior:'smooth'});
+    },
+    scrollHandler(event,toHome){
+      if(toHome){
+        if(event.deltaY<0&&this.scrollOffset==0){
+          event.preventDefault();
+          this.scrollTo(true);
+        }
+      }else{
+        if(event.deltaY>0){
+          event.preventDefault();
+          this.scrollTo(false);
+        }
+      }
+    },
+    onScrollHome(){
+      this.scrollTo(true);
     },
     async fetchProjects(){
       try{
@@ -86,14 +98,6 @@ export default{
       this.music=this.projects.filter(i=>i.category==='music');
     }
   },
-  mounted(){
-    this.fetchProjects();
-
-    const el=this.$refs.projects;
-    if(el){
-      this.projectPos=el.getBoundingClientRect().top
-    }
-  },
   computed:{
     display(){
       switch(this.tab){
@@ -106,7 +110,35 @@ export default{
         case 'music':
           return this.music;
       }
+    },
+    scrollOffset(){
+      return this.$refs.scroll.getScrollPosition().top;
     }
+  },
+  mounted(){
+    this.fetchProjects();
+
+    const elHome=this.$refs.home;
+    if(elHome){
+      elHome.addEventListener('wheel',(event)=>{this.scrollHandler(event,false)},{passive:false});
+    }
+    const elProject=this.$refs.projects;
+    if(elProject){
+      elProject.addEventListener('wheel',(event)=>{this.scrollHandler(event,true)},{passive:false});
+    }
+
+    bus.on('scrollTo',(toHome)=>{this.scrollTo(toHome)});
+  },
+  beforeDestroy() {
+    const el=this.$refs.home;
+    if(el){
+      el.removeEventListener('wheel',(event)=>{this.scrollHandler(event,false)});
+    }
+
+    bus.off('scrollTo');
+  },
+  created(){
+    this.scrollTo=throttle(this.scrollTo,300);
   }
 }
 </script>
