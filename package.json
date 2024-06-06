@@ -13,6 +13,7 @@
     "ky": "^1.2.4",
     "quasar": "^2.15.3",
     "vue": "^3.4.21",
+    "vue-gtag": "^2.0.1",
     "vue-router": "^4.3.0"
   },
   "devDependencies": {

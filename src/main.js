@@ -10,6 +10,8 @@ import '@quasar/extras/material-icons/material-icons.css'
 import '@quasar/extras/material-symbols-outlined/material-symbols-outlined.css'
 import 'quasar/src/css/index.sass'
 
+import VueGtag from 'vue-gtag';
+
 const app=createApp(App)
 
 app.config.globalProperties.offset=60
@@ -32,5 +34,9 @@ app.use(Quasar,{
     */
   }
 )
+
+Vue.use(VueGtag,{
+  config:{id:'G-0R69SN07PF'}
+})
 
 app.mount('#app')
