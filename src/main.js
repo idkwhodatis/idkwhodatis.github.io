@@ -35,7 +35,7 @@ app.use(Quasar,{
   }
 )
 
-Vue.use(VueGtag,{
+app.use(VueGtag,{
   config:{id:'G-0R69SN07PF'}
 })
 
