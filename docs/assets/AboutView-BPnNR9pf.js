@@ -1,0 +1,1 @@
+import{_ as e,s as t,c as o,o as s,a}from"./index-CyIzX5J6.js";const c={name:"AboutView",created(){t.currSection="About"}},n={class:"about"},r=a("h1",null,"This is an about page",-1),_=[r];function i(u,d,p,l,f,h){return s(),o("div",n,_)}const m=e(c,[["render",i]]);export{m as default};

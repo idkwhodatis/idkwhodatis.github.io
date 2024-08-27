@@ -13,7 +13,9 @@
 </template>
 
 <script>
+import {computed} from 'vue';
 import {RouterView} from 'vue-router';
+import {useQuasar} from 'quasar';
 import TopBar from './components/TopBar.vue'
 
 export default{
@@ -22,9 +24,17 @@ export default{
   },
   data(){
     return {
+      isMobile:false
     }
   },
   mounted(){
+      const $q=useQuasar();
+      this.isMobile=$q.platform.is.mobile!==undefined?$q.platform.is.mobile:false;
+  },
+  provide(){
+    return {
+      isMobile:computed(()=>this.isMobile)
+    };
   },
   methods:{
   }

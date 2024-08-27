@@ -13,3 +13,14 @@
   }
 }
 </style>
+
+<script>
+import store from '../utils/Store.js';
+
+export default {
+  name: 'AboutView',
+  created(){
+    store.currSection='About';
+  }
+};
+</script>

@@ -1,12 +1,12 @@
 <template>
-  <q-card class="bg-secondary card">
+  <q-card class="bg-secondary card" :class="isMobile?'col-10':''">
     <q-video v-if="project.category==='music'" :src="project.preview" :ratio="4/3"/>
     <q-img v-else @click="imgDialog=true" :src="preview" :ratio="4/3" class="rounded-borders" fit="contain">
       <div class="absolute-bottom-right text-subtitle3">{{date}}</div>
     </q-img>
 
     <q-card-section horizontal class="justify-between items-center">
-      <div class="text-h6" style="padding-left:10px">{{project.name}}</div>
+      <div class="text-h6" style="padding-left:10px;max-width:80%;word-wrap:break-word;">{{project.name}}</div>
 
       <q-card-actions align="right">
         <q-btn @click="openURL(project.repo)" flat round :ripple="false" color="white" icon="open_in_new"/>
@@ -34,6 +34,7 @@ const {formatDate}=date
 export default{
   name:'Project',
   props:['project'],
+  inject:['isMobile'],
   data(){
     return {
       imgDialog:false

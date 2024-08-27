@@ -24,10 +24,11 @@ const router=createRouter({
     }
   ],
   scrollBehavior(to,from,savedPosition){
-    if (to.path==='/'){
-      return {top:0,left:0};
-    }
-    return savedPosition||{top:0,left:0};
+    // if (to.path==='/'){
+    //   return {top:0,left:0};
+    // }
+    // return savedPosition||{top:0,left:0};
+    return {top:0,left:0};
   }
 })
 

@@ -1,28 +1,29 @@
 <template>
   <q-page>
-    <section ref="home" class="section column">
+    <section ref="home" :class="isMobile?'section-m':'section'" class="column">
 		  <div class="flex-grow" style="flex-grow:3"></div>
-      <p class="text-h1 text-weight-medium self-center">idkwhodatis</p>
+      <p v-if="!isMobile" class="text-h1 text-weight-medium self-center">idkwhodatis</p>
+      <p v-else="!isMobile" class="text-h3 text-weight-medium self-center">idkwhodatis</p>
 		  <div class="flex-grow" style="flex-grow:3"></div>
-      <q-btn @click="scrollTo(false)" round icon="arrow_downward" :ripple="false" class="self-center self-end no-hover" style="padding-bottom:1%;"/>
+      <q-btn @click="scrollTo(false)" round icon="arrow_downward" :ripple="false" flat class="self-center self-end no-hover" style="padding-bottom:1%;"/>
     </section>
     
-    <q-scroll-area ref="scroll" dark class="section bg-dark text-white rounded-borders">
-      <section ref="projects">
+    <q-scroll-area ref="scroll" dark :visible="isMobile?false:true" :class="isMobile?'section-m':'section'" class="bg-dark text-white rounded-borders">
+      <section ref="projects" style="height:100vh">
         <q-tabs v-model="tab" no-caps class="text-white shadow-2">
           <q-tab name="all" label="All" :ripple="false"/>
           <q-tab name="software" label="Software" :ripple="false"/>
           <q-tab name="game" label="Game" :ripple="false"/>
           <q-tab name="music" label="Music" :ripple="false"/>
         </q-tabs>
-        <div class="q-pa-md row justify-center q-gutter-xl">
+        <div :class="isMobile?'q-gutter-md':'q-gutter-xl q-pa-md'" class="row justify-center">
           <Project v-for="i in display" :project="i" :key="i.id"/>
         </div>
       </section>
     </q-scroll-area>
 
     <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18,18]">
-      <q-btn :ripple="false" fab icon="keyboard_arrow_up" color="dark" />
+      <q-btn @click="onScrollHome" :ripple="false" fab icon="keyboard_arrow_up" color="dark" />
     </q-page-scroller>
   </q-page>
 </template>
@@ -30,9 +31,10 @@
 <script>
 import ky from 'ky';
 import Project from '../components/Project.vue'
-import {date,throttle} from 'quasar'
+import {date,throttle,is} from 'quasar'
 const {extractDate}=date
 import bus from '../utils/EventBus.js'
+import store from '../utils/Store.js'
 
 export default{
   components:{
@@ -44,21 +46,30 @@ export default{
       projects:[],
       software:[],
       game:[],
-      music:[]
+      music:[],
+      touchStartY:0
     }
   },
+  inject:['isMobile'],
   methods:{
-    scrollTo(toHome){
+    scrollTo(toHome,smooth=true){
       let pos;
-      if(toHome){
+      if(toHome&&store.currSection!='Home'){
         pos=0;
-      }else{
+        window.scrollTo({top:pos,behavior:'smooth'});
+        store.currSection='Home';
+      }else if(!toHome&&store.currSection!='Projects'){
         const el=this.$refs.projects;
         if(el){
           pos=el.getBoundingClientRect().top+this.scrollOffset;
         }
+        if(smooth){
+          window.scrollTo({top:pos,behavior:'smooth'});
+        }else{
+          window.scrollTo({top:pos});
+        }
+        store.currSection='Projects';
       }
-      window.scrollTo({top:pos,behavior:'smooth'});
     },
     scrollHandler(event,toHome){
       if(toHome){
@@ -73,8 +84,33 @@ export default{
         }
       }
     },
+    swipingHandler(event,toHome){
+      if(toHome){
+        if(this.touchStartY-event.changedTouches[0].clientY<0&&this.scrollOffset==0){
+          event.preventDefault();
+        }
+      }else{
+        if(this.touchStartY-event.changedTouches[0].clientY>0){
+          event.preventDefault();
+        }
+      }
+    },
+    swipeHandler(event,toHome){
+      let deltaY=this.touchStartY-event.changedTouches[0].clientY;
+      if(Math.abs(deltaY)>=25){
+        if(toHome){
+          if(deltaY<0&&this.scrollOffset==0){
+            this.scrollTo(true);
+          }
+        }else{
+          if(deltaY>0){
+            this.scrollTo(false);
+          }
+        }
+      }
+    },
     onScrollHome(){
-      this.scrollTo(true);
+      store.currSection='Home'
     },
     async fetchProjects(){
       try{
@@ -120,19 +156,46 @@ export default{
 
     const elHome=this.$refs.home;
     if(elHome){
-      elHome.addEventListener('wheel',(event)=>{this.scrollHandler(event,false)},{passive:false});
+      if(!this.isMobile){
+        elHome.addEventListener('wheel',(event)=>{this.scrollHandler(event,false)},{passive:false});
+      }else{
+        elHome.addEventListener('touchstart',(event)=>{this.touchStartY=event.changedTouches[0].clientY},{passive:true});
+        elHome.addEventListener('touchmove',(event)=>{this.swipingHandler(event,false)},{passive:false});
+        elHome.addEventListener('touchend',(event)=>{this.swipeHandler(event,false)},{passive:true});
+      }
     }
     const elProject=this.$refs.projects;
     if(elProject){
-      elProject.addEventListener('wheel',(event)=>{this.scrollHandler(event,true)},{passive:false});
+      if(!this.isMobile){
+        elProject.addEventListener('wheel',(event)=>{this.scrollHandler(event,true)},{passive:false});
+      }else{
+        elProject.addEventListener('touchstart',(event)=>{this.touchStartY=event.changedTouches[0].clientY},{passive:true});
+        elProject.addEventListener('touchmove',(event)=>{this.swipingHandler(event,true)},{passive:false});
+        elProject.addEventListener('touchend',(event)=>{this.swipeHandler(event,true)},{passive:true});
+      }
     }
 
-    bus.on('scrollTo',(toHome)=>{this.scrollTo(toHome)});
+    bus.on('scrollTo',(toHome)=>{
+      if(toHome==='projects'){
+        this.scrollTo(false,false)
+      }else{
+        this.scrollTo(toHome)
+      }
+    });
   },
-  beforeDestroy() {
-    const el=this.$refs.home;
-    if(el){
-      el.removeEventListener('wheel',(event)=>{this.scrollHandler(event,false)});
+  beforeUnmount(){
+    const elHome=this.$refs.home;
+    if(elHome){
+      elHome.removeEventListener('wheel',(event)=>{this.scrollHandler(event,false)});
+      elHome.removeEventListener('touchstart',(event)=>{this.touchStartY=event.changedTouches[0].clientY},{passive:true});
+      elHome.removeEventListener('touchmove',(event)=>{this.swipingHandler(event,false)},{passive:false});
+      elHome.removeEventListener('touchend',(event)=>{this.swipeHandler(event,false)},{passive:true});
+    }
+    const elProject=this.$refs.projects;
+    if(elProject){
+      elProject.removeEventListener('touchstart',(event)=>{this.touchStartY=event.changedTouches[0].clientY},{passive:true});
+      elProject.removeEventListener('touchmove',(event)=>{this.swipingHandler(event,true)},{passive:false});
+      elProject.removeEventListener('touchend',(event)=>{this.swipeHandler(event,true)},{passive:true});
     }
 
     bus.off('scrollTo');
@@ -147,6 +210,11 @@ export default{
 .section{
   display:flex;
   height:calc(100vh - 60px);
+  width:100%;
+}
+.section-m{
+  display:flex;
+  height:calc(100vh - 120px);
   width:100%;
 }
 </style>

@@ -6,6 +6,9 @@ import {quasar,transformAssetUrls} from '@quasar/vite-plugin'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    host: '0.0.0.0'
+  },
   plugins:[
     vue({
       template:{transformAssetUrls}
