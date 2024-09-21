@@ -3,6 +3,6 @@
     "category":"software",
     "tags":["JavaScript","VS Code"],
     "description":"A 2048 game with undo and highest score saving function written in Java.",
-    "repo":"https://github.com/idkwhodatis/vue-indent",
+    "repo":"https://marketplace.visualstudio.com/items?itemName=idkwhodatis.vue-indent",
     "preview":".png"
 }
