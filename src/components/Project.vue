@@ -49,7 +49,7 @@ export default{
   },
   computed:{
     date(){
-      return formatDate(this.project.date,'MMM,D,YYYY');
+      return formatDate(this.project.date,'MMM D,YYYY');
     },
     preview(){
       if(this.project.preview==='none'){

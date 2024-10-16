@@ -6,6 +6,7 @@
     <template v-if="!isMobile">
       <q-btn @click="toHome(true)" :ripple="false" class="no-hover text-capitalize" flat color="text" label="Home"/>
       <q-btn @click="toHome(false)" :ripple="false" class="no-hover text-capitalize" flat color="text" label="Projects"/>
+      <q-btn @click="" :ripple="false" class="no-hover text-capitalize" flat color="text" label="React"/>
       <q-btn @click="toAbout" :ripple="false" class="no-hover text-capitalize" flat color="text" label="About"/>
       <q-btn @click="toRepo" :ripple="false" class="no-hover text-capitalize" flat color="text" label="Repo"/>
     </template>
@@ -20,6 +21,11 @@
           <q-item @click="toHome(false)" clickable v-close-popup>
             <q-item-section>
               <q-item-label>Projects</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item @click="" clickable v-close-popup>
+            <q-item-section>
+              <q-item-label>React</q-item-label>
             </q-item-section>
           </q-item>
           <q-item @click="toAbout" clickable v-close-popup>
