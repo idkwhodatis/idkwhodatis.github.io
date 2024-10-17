@@ -6,7 +6,7 @@
     <template v-if="!isMobile">
       <q-btn @click="toHome(true)" :ripple="false" class="no-hover text-capitalize" flat color="text" label="Home"/>
       <q-btn @click="toHome(false)" :ripple="false" class="no-hover text-capitalize" flat color="text" label="Projects"/>
-      <q-btn @click="" :ripple="false" class="no-hover text-capitalize" flat color="text" label="React"/>
+      <q-btn @click="toReact" :ripple="false" class="no-hover text-capitalize" flat color="text" label="React"/>
       <q-btn @click="toAbout" :ripple="false" class="no-hover text-capitalize" flat color="text" label="About"/>
       <q-btn @click="toRepo" :ripple="false" class="no-hover text-capitalize" flat color="text" label="Repo"/>
     </template>
@@ -63,13 +63,9 @@ export default{
           }else{
             store.currSection='Home';
           }
-        })
+        });
       }else{
-        if(toHome){
-          bus.emit('scrollTo',true);
-        }else{
-          bus.emit('scrollTo',false);
-        }
+        bus.emit('scrollTo',toHome);
       }
     },
     toAbout(){
@@ -77,8 +73,11 @@ export default{
         this.$router.push('/about');
       }
     },
+    toReact(){
+      window.location.href='https://idkwhodatis.github.io/idkwhodatis.github.io-react/';
+    },
     toRepo(){
-      window.location.href='https://github.com/idkwhodatis/idkwhodatis.github.io'
+      window.location.href='https://github.com/idkwhodatis/idkwhodatis.github.io';
     }
   },
   computed:{

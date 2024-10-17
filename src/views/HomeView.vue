@@ -3,7 +3,7 @@
     <section ref="home" :class="isMobile?'section-m':'section'" class="column">
 		  <div class="flex-grow" style="flex-grow:3"></div>
       <p v-if="!isMobile" class="text-h1 text-weight-medium self-center" style="cursor:default">idkwhodatis</p>
-      <p v-else="!isMobile" class="text-h3 text-weight-medium self-center">idkwhodatis</p>
+      <p v-else class="text-h3 text-weight-medium self-center">idkwhodatis</p>
 		  <div class="flex-grow" style="flex-grow:3"></div>
       <q-btn @click="scrollTo(false)" round icon="arrow_downward" :ripple="false" flat class="self-center self-end no-hover" style="padding-bottom:1%;"/>
     </section>
