@@ -2,10 +2,15 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { ArrowUpRight } from 'lucide-vue-next'
 import TopBar from '@/components/TopBar.vue'
+function skipToContent() {
+  const main = document.getElementById('main-content')
+  main?.focus({ preventScroll: true })
+  main?.scrollIntoView({ block: 'start' })
+}
 </script>
 
 <template>
-  <a class="skip-link" href="#main-content" @click.prevent="() => { const main = $el.ownerDocument.getElementById('main-content'); main?.focus(); main?.scrollIntoView() }">Skip to content</a>
+  <a class="skip-link" href="#main-content" @click.prevent="skipToContent">Skip to content</a>
   <div class="site-shell">
     <TopBar />
     <RouterView />

@@ -1,16 +1,17 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import fs from 'node:fs'
 import { readCatalogue } from '../../scripts/catalogue.js'
 import { filterProjects, normalizeProject, parseProjectDate, safeExternalUrl, youtubeEmbed } from '../../src/lib/projects.js'
 
 const fixture = { date: '7.31.2025', category: 'software', tags: ['Vue'], description: 'A useful tool', repo: 'https://example.com/project', preview: '.png' }
 
-test('the original catalogue is complete, valid and newest-first', () => {
+test('the catalogue includes every manifest entry, valid and newest-first', () => {
   const projects = readCatalogue()
-  assert.equal(projects.length, 14)
+  const names = JSON.parse(fs.readFileSync(new URL('../../public/projects/projects.json', import.meta.url), 'utf8'))
+  assert.equal(projects.length, names.length)
+  assert.deepEqual(new Set(projects.map(project => project.name)), new Set(names))
   assert.equal(new Set(projects.map(project => project.name)).size, projects.length)
-  assert.ok(projects.some(project => project.name === 'FormatBay'))
-  assert.ok(projects.some(project => project.category === 'music'))
   assert.ok(projects.every((project, index) => index === 0 || projects[index - 1].timestamp >= project.timestamp))
 })
 

@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
       contents: write
@@ -27,11 +27,6 @@ jobs:
       - name: Install dependencies
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
-      - name: Bootstrap the official shadcn-vue components once
-        run: |
-          if [ ! -f src/components/ui/button/Button.vue ]; then
-            npx --yes shadcn-vue@latest add button card badge dialog tabs input separator --yes
-          fi
       - name: Test catalogue and utilities
         run: npm test
       - name: Build into docs
@@ -50,13 +45,13 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 14
-      - name: Commit verified build and generated components to new
+      - name: Commit verified build to new
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/new'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs package.json package-lock.json src/components/ui
+          git add docs package-lock.json
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m 'build: commit verified portfolio and shadcn-vue components [skip ci]'
+          git commit -m 'build: commit verified portfolio output [skip ci]'
           # Never force-push: a concurrent user commit must win over a stale build.
           git push origin HEAD:new
