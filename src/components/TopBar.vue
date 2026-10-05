@@ -1,93 +1,41 @@
-<template>
-  <q-toolbar class="full-height q-gutter-x-md" style="padding:0;">
-    <div class="flex-grow" style="flex-grow:0.3"></div>
-    <label class="text-h5">idkwhodatis.github.io</label>
-    <div class="flex-grow" style="flex-grow:3"></div>
-    <template v-if="!isMobile">
-      <q-btn @click="toHome(true)" :ripple="false" class="no-hover text-capitalize" flat color="text" label="Home"/>
-      <q-btn @click="toHome(false)" :ripple="false" class="no-hover text-capitalize" flat color="text" label="Projects"/>
-      <q-btn @click="toReact" :ripple="false" class="no-hover text-capitalize" flat color="text" label="React"/>
-      <q-btn @click="toAbout" :ripple="false" class="no-hover text-capitalize" flat color="text" label="About"/>
-      <q-btn @click="toRepo" :ripple="false" class="no-hover text-capitalize" flat color="text" label="Repo"/>
-    </template>
-    <template v-else>
-      <q-btn-dropdown :ripple="false" class="text-capitalize" flat color="text" style="margin:0;padding-right:0" :style="currSection=='Projects'?'padding-left:4px':''" :label="currSection">
-        <q-list class="bg-primary text-white">
-          <q-item @click="toHome(true)" clickable v-close-popup>
-            <q-item-section>
-              <q-item-label>Home</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item @click="toHome(false)" clickable v-close-popup>
-            <q-item-section>
-              <q-item-label>Projects</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item @click="" clickable v-close-popup>
-            <q-item-section>
-              <q-item-label>React</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item @click="toAbout" clickable v-close-popup>
-            <q-item-section>
-              <q-item-label>About</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item @click="toRepo" clickable v-close-popup>
-            <q-item-section>
-              <q-item-label>Repo</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-btn-dropdown>
-    </template>
-    <div class="flex-grow" style="flex-grow:1"></div>
-  </q-toolbar>
-</template>
+<script setup>
+import { ref } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
+import { ArrowUpRight, Menu } from 'lucide-vue-next'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 
-<script>
-import bus from '../utils/EventBus.js'
-import store from '../utils/Store.js'
-
-export default{
-  name:'TopBar',
-  inject:['isMobile'],
-  methods:{
-    toHome(toHome){
-      if(this.$route.path!=='/'){
-        this.$router.push('/').then(()=>{
-          if(!toHome){
-            setTimeout(()=>{
-              bus.emit('scrollTo','projects');
-            })
-          }else{
-            store.currSection='Home';
-          }
-        });
-      }else{
-        bus.emit('scrollTo',toHome);
-      }
-    },
-    toAbout(){
-      if(this.$route.path!=='/about'){
-        this.$router.push('/about');
-      }
-    },
-    toReact(){
-      window.location.href='https://idkwhodatis.github.io/idkwhodatis.github.io-react/';
-    },
-    toRepo(){
-      window.location.href='https://github.com/idkwhodatis/idkwhodatis.github.io';
-    }
-  },
-  computed:{
-    currSection(){
-      return store.currSection;
-    }
-  }
-}
+const route = useRoute()
+const open = ref(false)
+const links = [
+  { label: 'Home', to: '/', active: () => route.path === '/' && !route.hash },
+  { label: 'Projects', to: { path: '/', hash: '#projects' }, active: () => route.path === '/' && route.hash === '#projects' },
+  { label: 'About', to: '/about', active: () => route.path === '/about' },
+]
 </script>
 
-<style>
-
-</style>
+<template>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <RouterLink class="wordmark" to="/" aria-label="idkwhodatis home">idkwhodatis<span>.</span></RouterLink>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <RouterLink v-for="link in links" :key="link.label" :to="link.to" :class="{ current: link.active() }" :aria-current="link.active() ? 'page' : undefined">{{ link.label }}</RouterLink>
+        <span class="nav-divider" aria-hidden="true"></span>
+        <a href="https://github.com/idkwhodatis/idkwhodatis.github.io" target="_blank" rel="noopener noreferrer">Source <ArrowUpRight :size="14" aria-hidden="true" /></a>
+      </nav>
+      <Dialog v-model:open="open">
+        <DialogTrigger as-child>
+          <Button class="mobile-menu-button" variant="ghost" size="icon" aria-label="Open navigation"><Menu :size="20" aria-hidden="true" /></Button>
+        </DialogTrigger>
+        <DialogContent class="navigation-dialog">
+          <DialogTitle>Navigation</DialogTitle>
+          <DialogDescription class="sr-only">Explore the portfolio.</DialogDescription>
+          <nav class="mobile-nav" aria-label="Mobile navigation">
+            <RouterLink v-for="link in links" :key="link.label" :to="link.to" @click="open = false">{{ link.label }} <ArrowUpRight :size="18" aria-hidden="true" /></RouterLink>
+            <a href="https://github.com/idkwhodatis/idkwhodatis.github.io" target="_blank" rel="noopener noreferrer" @click="open = false">Source <ArrowUpRight :size="18" aria-hidden="true" /></a>
+          </nav>
+        </DialogContent>
+      </Dialog>
+    </div>
+  </header>
+</template>

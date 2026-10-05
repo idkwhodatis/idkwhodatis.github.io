@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>Page not found — idkwhodatis</title>
+<style>body{margin:0;min-height:100svh;display:grid;place-content:center;background:#050505;color:#eee;font:16px/1.6 system-ui;padding:24px}a{color:#a6b8a5}h1{font-size:clamp(2rem,8vw,4rem);letter-spacing:-.05em}</style>
+</head><body><main><p>404 / A different direction</p><h1>This page isn't here.</h1><a href="/">Back to the portfolio</a></main>
+<script>
+// Preserve the old history-mode About URL without needing server rewrites.
+if (/\/about\/?$/.test(location.pathname)) {
+  const base = location.pathname.replace(/about\/?$/, '')
+  location.replace(base + '#/about')
+}
+</script></body></html>

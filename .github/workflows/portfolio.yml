@@ -1,0 +1,62 @@
+name: Build portfolio
+on:
+  push:
+    branches: [new]
+    paths-ignore: ['docs/**', '**.md']
+  pull_request:
+    branches: [master, new]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: portfolio-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Bootstrap the official shadcn-vue components once
+        run: |
+          if [ ! -f src/components/ui/button/Button.vue ]; then
+            npx --yes shadcn-vue@latest add button card badge dialog tabs input separator --yes
+          fi
+      - name: Test catalogue and utilities
+        run: npm test
+      - name: Build into docs
+        run: npm run build
+      - name: Install test browser
+        run: npx playwright install --with-deps chromium
+      - name: Browser, accessibility and responsive tests
+        run: npm run test:e2e
+      - name: Upload build and visual checks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-${{ github.sha }}
+          path: |
+            docs/
+            playwright-report/
+            test-results/
+          retention-days: 14
+      - name: Commit verified build and generated components to new
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/new'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs package.json package-lock.json src/components/ui
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'build: commit verified portfolio and shadcn-vue components [skip ci]'
+          # Never force-push: a concurrent user commit must win over a stale build.
+          git push origin HEAD:new

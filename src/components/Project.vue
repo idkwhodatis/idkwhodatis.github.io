@@ -1,79 +1,48 @@
-<template>
-  <q-card class="bg-secondary card" :class="isMobile?'col-10':''">
-    <q-video v-if="project.category==='music'" :src="project.preview" :ratio="4/3"/>
-    <q-img v-else @click="imgDialog=true" :src="preview" :ratio="4/3" class="rounded-borders" fit="contain">
-      <div class="absolute-bottom-right text-subtitle3">{{date}}</div>
-    </q-img>
+<script setup>
+import { ref, watch } from 'vue'
+import { ArrowUpRight, Code2, Expand, Gamepad2, Music2, Play } from 'lucide-vue-next'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 
-    <q-card-section horizontal class="justify-between items-center">
-      <div class="text-h6" style="padding-left:10px;max-width:80%;word-wrap:break-word;">{{project.name}}</div>
-
-      <q-card-actions align="right">
-        <q-btn @click="openURL(project.repo)" flat round :ripple="false" color="white" icon="open_in_new"/>
-      </q-card-actions>
-    </q-card-section>
-
-    <q-card-section class="q-pt-none">
-      <div class="row">
-        <q-chip v-for="i in project.tags" dense square>{{i}}</q-chip>
-      </div>
-
-      {{project.description}}
-    </q-card-section>
-  </q-card>
-
-  <q-dialog v-model="imgDialog" full-height full-width auto-close>
-    <q-img :src="preview" class="rounded-borders self-center" fit="contain" style="max-width:75vw;max-height:80vh"/>
-  </q-dialog>
-</template>
-
-<script>
-import {openURL,date} from 'quasar'
-const {formatDate}=date
-
-export default{
-  name:'Project',
-  props:['project'],
-  inject:['isMobile'],
-  data(){
-    return {
-      imgDialog:false
-    }
-  },
-  methods:{
-    openURL(url){
-      openURL(url);
-    }
-  },
-  mounted(){
-  },
-  computed:{
-    date(){
-      return formatDate(this.project.date,'MMM D,YYYY');
-    },
-    preview(){
-      if(this.project.preview==='none'){
-        return '/projects/preview/none.jpg'
-      }else{
-        return '/projects/preview/'+this.project.name+this.project.preview
-      }
-    }
-  }
-}
+const props = defineProps({ project: { type: Object, required: true } })
+const failed = ref(false)
+const open = ref(false)
+watch(() => props.project.name, () => { failed.value = false; open.value = false })
+const icons = { software: Code2, game: Gamepad2, music: Music2 }
+const base = import.meta.env.BASE_URL
 </script>
 
-<style>
-.card{
-  width:20vw;
-}
-.custom-card .q-img{
-  max-height:25vh;
-  width:auto;
-  flex-grow:1;
-}
-.custom-card .q-video{
-  max-height:25vh;
-  width:auto;
-  flex-grow:1;
-}
-</style>
+<template>
+  <article class="project-card" data-testid="project-card" :data-category="project.category" :style="{ '--project-color': project.color }">
+    <Card class="project-surface">
+      <Dialog v-model:open="open">
+        <DialogTrigger as-child>
+          <button type="button" class="card-preview" :aria-label="`Preview ${project.name}`">
+            <img v-if="project.image && !failed" :src="base + project.image" :alt="`${project.name} screenshot`" loading="lazy" decoding="async" width="640" height="400" @error="failed = true" />
+            <div v-else class="preview-art" aria-hidden="true">
+              <div class="preview-orbit orbit-one"></div><div class="preview-orbit orbit-two"></div>
+              <component :is="icons[project.category]" class="preview-icon" :size="36" :stroke-width="1" />
+              <span class="preview-art-label">{{ project.category === 'music' ? 'Press play. Tune in.' : 'An idea, made real.' }}</span>
+            </div>
+            <span class="preview-action"><Play v-if="project.category === 'music'" :size="15" aria-hidden="true" /><Expand v-else :size="15" aria-hidden="true" /><span>{{ project.category === 'music' ? 'Listen' : 'Preview' }}</span></span>
+          </button>
+        </DialogTrigger>
+        <DialogContent class="project-dialog">
+          <div class="dialog-heading"><DialogTitle>{{ project.name }}</DialogTitle><DialogDescription>{{ project.description }}</DialogDescription></div>
+          <iframe v-if="open && project.embed" class="music-player" :src="project.embed" :title="`${project.name} music player`" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <img v-else-if="project.image && !failed" class="full-preview" :src="base + project.image" :alt="`${project.name} full-size preview`" @error="failed = true" />
+          <div v-else class="missing-preview"><component :is="icons[project.category]" :size="40" :stroke-width="1" aria-hidden="true" /><p>No preview available. Explore the project below.</p></div>
+          <Button as-child variant="outline" class="dialog-project-link"><a :href="project.repo" target="_blank" rel="noopener noreferrer">Open project <ArrowUpRight :size="16" aria-hidden="true" /></a></Button>
+        </DialogContent>
+      </Dialog>
+      <CardContent class="project-content">
+        <div class="project-meta"><span>{{ project.categoryLabel }}</span><time :datetime="project.dateISO">{{ project.dateLabel }}</time></div>
+        <div class="project-title-row"><h3>{{ project.name }}</h3><Button as-child variant="ghost" size="icon" class="project-link"><a :href="project.repo" :aria-label="`Open ${project.name}`" target="_blank" rel="noopener noreferrer"><ArrowUpRight :size="19" aria-hidden="true" /></a></Button></div>
+        <p class="project-description">{{ project.description }}</p>
+        <div class="project-tags"><Badge v-for="tag in project.tags" :key="tag" variant="secondary">{{ tag }}</Badge></div>
+      </CardContent>
+    </Card>
+  </article>
+</template>
