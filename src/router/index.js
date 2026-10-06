@@ -1,6 +1,7 @@
 import { nextTick } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
+import { waitForHeroLayout } from '@/lib/heroReveal'
 
 const router = createRouter({
   // Hash routes work on GitHub Pages, including refreshes and subdirectory previews.
@@ -12,9 +13,13 @@ const router = createRouter({
   ],
   async scrollBehavior(to, from, savedPosition) {
     await nextTick()
+    await waitForHeroLayout(document.querySelector('[data-hero-state]'))
+    // Another navigation can finish while a reveal animation is in flight.
+    if (router.currentRoute.value.fullPath !== to.fullPath) return false
     if (savedPosition) return savedPosition
     if (to.hash === '#projects') {
-      return { el: '#projects', top: 104, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }
+      const top = (document.querySelector('.site-header')?.getBoundingClientRect().height ?? 88) + 24
+      return { el: '#projects', top, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }
     }
     return { top: 0 }
   },

@@ -1,4 +1,5 @@
 import './assets/main.css'
+import './assets/refinements.css'
 import { createApp } from 'vue'
 import VueGtag from 'vue-gtag'
 import App from './App.vue'

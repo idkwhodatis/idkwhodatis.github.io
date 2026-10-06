@@ -1,0 +1,157 @@
+/* Readability and full-screen introduction pass. Loaded after main.css so the
+   existing small-screen rules cannot silently restore the former tiny type. */
+:root {
+  --site-header-height: 88px;
+  --reveal-duration: 720ms;
+  --reveal-easing: cubic-bezier(.22, 1, .36, 1);
+}
+
+body { font-size: 17px; line-height: 1.65; }
+/* No hand cursor, including descendants and portalled dialogs. Text fields keep
+   their editing caret; changing the cursor does not disable text selection. */
+*, *::before, *::after { cursor: default !important; }
+input:not([type='button']):not([type='submit']):not([type='reset']), textarea,
+[contenteditable='true'], [contenteditable='true'] * { cursor: text !important; }
+
+.header-inner { height: var(--site-header-height); }
+.wordmark { font-size: 25px; }
+.desktop-nav { font-size: 16px; gap: 32px; }
+.eyebrow { font-size: 14px; letter-spacing: .14em; }
+.collection-count, .results-summary { font-size: 14px; }
+.section-heading h2 { font-size: clamp(2rem, 3.6vw, 3rem); }
+.filter-tabs { min-height: 52px; }
+.filter-tabs [role='tab'] { min-height: 44px; padding: 9px 16px; font-size: 16px; }
+.filter-count { font-size: 13px; }
+.project-search { width: 300px; }
+.project-search input { height: 52px; font-size: 16px; }
+.project-search > svg { top: 18px; }
+.project-search .clear-search { top: 4px; width: 44px; height: 44px; }
+.results-summary { margin-block: 24px; }
+.project-meta { font-size: 13px; letter-spacing: .02em; flex-wrap: wrap; row-gap: 6px; }
+.project-title-row h3 { font-size: 23px; line-height: 1.4; }
+.project-description { font-size: 16px; line-height: 1.8; }
+.project-content { padding: 24px; }
+.project-link { width: 44px; height: 44px; margin-top: -7px; }
+.project-tags [data-slot='badge'], .project-tags > span { font-size: 13px; padding: 4px 9px; white-space: normal; }
+.preview-action, .preview-art-label { font-size: 14px; }
+.empty-state h3 { font-size: 24px; }
+.empty-state p, .missing-preview { font-size: 16px; }
+[data-slot='button'] { font-size: 16px; min-height: 44px; }
+.dialog-heading [data-slot='dialog-title'] { font-size: 24px; line-height: 1.4; }
+.dialog-heading [data-slot='dialog-description'] { font-size: 16px; line-height: 1.8; }
+[data-slot='dialog-close'] { min-width: 44px; min-height: 44px; }
+.site-footer .wordmark { font-size: 22px; }
+.site-footer p, .site-footer > a:last-child { font-size: 14px; }
+.about-intro { font-size: 18px; }
+.interest-card h2 { font-size: 26px; }
+.interest-card p { font-size: 17px; }
+.colophon > p:nth-child(2), .colophon a { font-size: 16px; }
+.mobile-nav { font-size: 18px; }
+
+/* Header + expanded intro = one viewport. A minimum height on very short
+   windows / high zoom keeps larger text usable rather than clipping controls. */
+.hero {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: max(560px, calc(100svh - var(--site-header-height)));
+  padding: 24px 0 0;
+  border: 1px solid transparent;
+  border-radius: 0;
+  overflow-anchor: none;
+  transition: height var(--reveal-duration) var(--reveal-easing),
+    padding var(--reveal-duration) var(--reveal-easing),
+    border-color var(--reveal-duration) var(--reveal-easing),
+    border-radius var(--reveal-duration) var(--reveal-easing);
+}
+.hero.is-compact {
+  height: clamp(350px, 46svh, 440px);
+  padding: 16px 24px 0;
+  border-color: var(--border);
+  border-radius: 20px;
+}
+.hero-overline { align-items: center; min-width: 0; }
+.hero-overline .eyebrow { font-size: 13px; }
+.hero-stage { height: auto; min-height: 0; }
+.hero-copy { padding: 16px 10px; }
+.hero-copy h1 {
+  font-size: clamp(3.5rem, 7.7vw, 7.5rem);
+  line-height: 1.05;
+  transition: font-size var(--reveal-duration) var(--reveal-easing);
+}
+.hero.is-compact .hero-copy h1 { font-size: clamp(2.5rem, 4vw, 3.75rem); }
+.scene-label { font-size: 14px; margin-bottom: 20px; transition: margin var(--reveal-duration) var(--reveal-easing); }
+.hero.is-compact .scene-label { margin-bottom: 12px; }
+.hero-description-wrap {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows var(--reveal-duration) var(--reveal-easing), opacity 250ms ease;
+}
+.hero-description-wrap > div { min-height: 0; overflow: hidden; }
+.hero-description { max-width: 510px; margin: 22px auto 26px; font-size: 19px; line-height: 1.75; }
+.hero.is-compact .hero-description-wrap { grid-template-rows: 0fr; opacity: 0; }
+.hero-cta { min-height: 48px; font-size: 17px; padding-inline: 24px; margin-top: 0; transition: margin var(--reveal-duration) var(--reveal-easing), background-color .2s; }
+.hero.is-compact .hero-cta { margin-top: 16px; }
+.hero-art { transition: opacity var(--reveal-duration) var(--reveal-easing); }
+.hero.is-compact .hero-art { opacity: .55; }
+.hero-bottom { min-height: 80px; gap: 18px; }
+.hero.is-compact .hero-bottom { border-bottom-color: transparent; }
+.scene-selector { gap: 24px; }
+.scene-choice { font-size: 16px; gap: 9px; }
+.scene-number, .reduced-motion-note { font-size: 13px; }
+.motion-controls button { width: 44px; }
+/* Disable scroll anchoring for the changing hero AND the content it lifts.
+   Otherwise a browser may compensate the collapse by jumping the scrollbar. */
+#main-content:has(> .hero), .projects-section { overflow-anchor: none; }
+.projects-section { padding-top: 56px; }
+
+@media (max-width: 1100px) {
+  .project-toolbar { gap: 16px; }
+  .filter-tabs [role='tab'] { padding-inline: 12px; }
+  .project-search { width: 260px; }
+  .collection-count { display: none; }
+}
+
+@media (max-width: 767px) {
+  :root { --site-header-height: 76px; }
+  body { font-size: 16px; }
+  .wordmark { font-size: 23px; }
+  .eyebrow, .hero-overline .eyebrow { font-size: 13px; }
+  .hero { padding-top: 20px; height: max(540px, calc(100svh - var(--site-header-height))); }
+  .hero.is-compact { height: clamp(350px, 46svh, 420px); padding: 14px 12px 0; border-radius: 14px; }
+  .hero-copy { padding: 12px 0; }
+  .hero-copy h1 { font-size: clamp(2.75rem, 10.7vw, 4.75rem); }
+  .hero.is-compact .hero-copy h1 { font-size: clamp(2rem, 8.4vw, 3rem); }
+  .scene-label { font-size: 13px; letter-spacing: .12em; margin-bottom: 20px; }
+  .hero-description { font-size: 17px; max-width: 350px; line-height: 1.8; margin-block: 20px 24px; }
+  .hero-cta { font-size: 16px; padding-inline: 20px; }
+  .hero-bottom { align-items: center; padding-block: 10px; gap: 8px; min-height: 76px; }
+  .scene-selector { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; flex: 1; min-width: 0; }
+  .scene-choice { flex-direction: column; justify-content: center; gap: 7px; padding: 8px 0; font-size: 14px; min-width: 0; }
+  .scene-indicator { width: 12px; }
+  .scene-choice[aria-pressed='true'] .scene-indicator { width: 22px; }
+  .motion-controls { flex: 0 0 auto; }
+  .project-toolbar { flex-direction: column; align-items: stretch; }
+  .filter-tabs { width: 100%; }
+  .filter-tabs [role='tab'] { font-size: 15px; min-height: 44px; padding-inline: 7px; }
+  .project-search { width: 100%; }
+  .section-heading h2 { font-size: 34px; max-width: none; }
+  .project-content { padding: 22px; }
+  .project-title-row h3 { font-size: 23px; }
+  .project-description { font-size: 16px; }
+  .project-meta, .project-tags [data-slot='badge'], .project-tags > span { font-size: 13px; }
+  .about-intro { font-size: 17px; }
+  .site-footer p, .site-footer > a:last-child { font-size: 14px; }
+  .projects-section { padding-top: 42px; }
+}
+
+@media (max-width: 380px) {
+  .scene-choice { font-size: 13px; }
+  .hero.is-compact { padding-inline: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero, .hero-copy h1, .scene-label, .hero-description-wrap, .hero-cta, .hero-art {
+    transition: none !important;
+  }
+}
