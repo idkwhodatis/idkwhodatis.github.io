@@ -70,12 +70,14 @@ test('everyday text is readable and interactive elements keep the normal cursor'
   for (const selector of ['.project-meta', '.project-tags > span', '.eyebrow']) {
     expect(await page.locator(selector).first().evaluate(element => parseFloat(getComputedStyle(element).fontSize))).toBeGreaterThanOrEqual(13)
   }
-  for (const selector of ['.hero-cta', '.hero-cta svg', '.scene-choice', '[role="tab"]', '.card-preview', '.wordmark']) {
+  for (const selector of ['.hero-cta', '.hero-cta svg', '.scene-choice', '[role="tab"]', '.card-preview', '.wordmark', '#project-search']) {
     const element = page.locator(selector).first()
     await element.hover()
     await expect(element).toHaveCSS('cursor', 'default')
   }
-  await expect(page.locator('#project-search')).toHaveCSS('cursor', 'text')
+  for (const selector of ['.eyebrow', '.scene-choice', '[role="tab"]', '.project-meta', '.project-tags > span']) {
+    await expect(page.locator(selector).first()).toHaveCSS('user-select', 'none')
+  }
 })
 
 test('small screens keep controls inside the intro and never overflow horizontally', async ({ page }) => {

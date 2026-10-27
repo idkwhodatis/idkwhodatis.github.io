@@ -1,10 +1,10 @@
 name: Build portfolio
 on:
   push:
-    branches: [new]
+    branches: [master]
     paths-ignore: ['docs/**', '**.md']
   pull_request:
-    branches: [master, new]
+    branches: [master]
   workflow_dispatch:
 permissions:
   contents: read
@@ -21,12 +21,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - name: Install dependencies
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Sync classic and legacy branch snapshots
+        run: node scripts/sync-legacy.js
       - name: Test catalogue and utilities
         run: npm test
       - name: Build into docs
@@ -45,8 +48,8 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 14
-      - name: Commit verified build to new
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/new'
+      - name: Commit verified build to master
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -54,4 +57,4 @@ jobs:
           if git diff --cached --quiet; then exit 0; fi
           git commit -m 'build: commit verified portfolio output [skip ci]'
           # Never force-push: a concurrent user commit must win over a stale build.
-          git push origin HEAD:new
+          git push origin HEAD:master

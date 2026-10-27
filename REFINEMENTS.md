@@ -9,9 +9,10 @@ Navigation, filters, and project descriptions are now 16px; hero description is
 are 13–14px instead of 8–12px. About-page body copy is 17–18px. The rules live in
 `src/assets/refinements.css`, loaded after the original design stylesheet.
 
-Buttons, links, tabs, preview cards and their descendants use the normal arrow,
-including inside portalled dialogs. Editable text fields retain the text cursor.
-Hover feedback and keyboard focus rings remain functional.
+Buttons, links, tabs, preview cards, editable text fields and their descendants
+use the normal arrow (`cursor: default`), including inside portalled dialogs,
+and UI labels / chrome are non-selectable (`user-select: none`). Hover feedback
+and keyboard focus rings remain functional.
 
 ## Full-screen introduction
 

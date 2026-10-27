@@ -23,7 +23,7 @@ function resetFilters() { selectCategory('all') }
       <div class="section-heading"><div><p class="eyebrow">The things I've made</p><h2 id="projects-heading">A few different directions<span>.</span></h2></div><span class="collection-count">{{ String(projects.length).padStart(2, '0') }} / Collected works</span></div>
       <Tabs v-model="category" class="project-tabs">
         <div class="project-toolbar">
-          <TabsList aria-label="Filter projects" class="filter-tabs"><TabsTrigger v-for="item in categories" :key="item.value" :value="item.value">{{ item.label }}<span class="filter-count">{{ item.value === 'all' ? projects.length : projects.filter(project => project.category === item.value).length }}</span></TabsTrigger></TabsList>
+          <TabsList aria-label="Filter projects" class="filter-tabs"><TabsTrigger v-for="item in categories" :key="item.value" :value="item.value" :style="{ '--tab-color': item.color }">{{ item.label }}<span class="filter-count">{{ item.value === 'all' ? projects.length : projects.filter(project => project.category === item.value).length }}</span></TabsTrigger></TabsList>
           <div class="project-search"><label for="project-search" class="sr-only">Search projects</label><Search :size="16" aria-hidden="true" /><Input id="project-search" v-model="query" placeholder="Find something…" autocomplete="off" /><Button v-if="query" variant="ghost" size="icon" class="clear-search" aria-label="Clear search" @click="query = ''"><X :size="14" aria-hidden="true" /></Button></div>
         </div>
         <p class="results-summary" role="status">{{ filtered.length }} {{ filtered.length === 1 ? 'project' : 'projects' }}<span aria-hidden="true"> · </span><span>Newest first</span></p>

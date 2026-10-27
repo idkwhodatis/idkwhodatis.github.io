@@ -1,6 +1,6 @@
 # idkwhodatis — portfolio
 
-A Vue 3 portfolio for software, games, and music, rebuilt with **shadcn-vue, Reka UI, Tailwind CSS 4, and Vite**. The redesign is developed on `new`; `master` and the live Pages configuration are intentionally unchanged.
+A Vue 3 portfolio for software, games, and music, rebuilt with **shadcn-vue, Reka UI, Tailwind CSS 4, and Vite**. Previous versions remain available on the `classic` and `legacy` branches and are deployed alongside the main site under `/classic/` and `/legacy/`.
 
 ## Design
 
@@ -58,11 +58,9 @@ The Vite catalogue plugin validates and bundles these records, preserving their 
 
 **The output folder is `docs/` (plural), preserving the repository's existing build directory.** Vite sets `build.outDir: 'docs'`, `emptyOutDir: true`, and relative asset paths. Each successful build replaces obsolete bundles, copies `public/`, and includes `.nojekyll`.
 
-The workflow in `.github/workflows/portfolio.yml` installs dependencies, tests the catalogue and geometry, builds, runs desktop/mobile Playwright and axe accessibility checks, and only then commits `docs/` back to `new`. Build results and screenshots are also retained as Actions artifacts. It never force-pushes, changes `master`, or updates Pages settings. Concurrent source changes cause a stale build's push to fail rather than overwrite work.
+The workflow in `.github/workflows/portfolio.yml` installs dependencies, syncs the `classic` and `legacy` branch builds into `/classic/` and `/legacy/`, tests the catalogue and geometry, builds, runs desktop/mobile Playwright and axe accessibility checks, and only then commits `docs/` back to `master`. Build results and screenshots are also retained as Actions artifacts. It never force-pushes or updates Pages settings. Concurrent source changes cause a stale build's push to fail rather than overwrite work.
 
-Vue Router uses hash URLs (`/#/about`), so refreshing internal pages works on GitHub Pages without server rewrites. The static `404.html` also redirects the old `/about` URL. The previous React site remains linked from About.
-
-To publish later, select `new` and `/docs` in GitHub Pages settings, or merge the reviewed changes into the branch currently used by Pages. Creating `new` does not change the public website. A queued or failed Actions run does not update the committed `docs/` output: check that the build has succeeded before publishing.
+Vue Router uses hash URLs (`/#/about`), so refreshing internal pages works on GitHub Pages without server rewrites. The static `404.html` also redirects the old `/about` URL. The previous `classic` (Vue/Quasar), `legacy` (2020 CV), and React versions remain linked from the header and About page.
 
 ## Layout
 
