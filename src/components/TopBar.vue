@@ -18,7 +18,7 @@ const links = [
 ]
 const legacyVersions = [
   { label: 'Classic', subtitle: 'Vue 3 + Quasar', href: `${base}classic/` },
-  { label: 'Legacy', subtitle: 'Original 2020 CV', href: `${base}legacy/` },
+  { label: 'Legacy', subtitle: 'Vue 2 + Vanilla CSS', href: `${base}legacy/` },
 ]
 </script>
 
