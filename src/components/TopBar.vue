@@ -26,7 +26,7 @@ const legacyVersions = [
       <nav class="desktop-nav" aria-label="Main navigation">
         <RouterLink v-for="link in links" :key="link.label" :to="link.to" :class="{ current: link.active() }" :aria-current="link.active() ? 'page' : undefined">{{ link.label }}</RouterLink>
         <span class="nav-divider" aria-hidden="true"></span>
-        <div class="nav-legacy" role="group" aria-label="Legacy versions">
+        <div class="nav-legacy">
           <span class="nav-group-label" aria-hidden="true">Archive</span>
           <a v-for="version in legacyVersions" :key="version.label" :href="version.href" :title="version.title" target="_blank" rel="noopener noreferrer">{{ version.label }} <ArrowUpRight :size="14" aria-hidden="true" /></a>
         </div>
@@ -42,7 +42,7 @@ const legacyVersions = [
           <DialogDescription class="sr-only">Explore the portfolio.</DialogDescription>
           <nav class="mobile-nav" aria-label="Mobile navigation">
             <RouterLink v-for="link in links" :key="link.label" :to="link.to" @click="open = false">{{ link.label }} <ArrowUpRight :size="18" aria-hidden="true" /></RouterLink>
-            <div class="mobile-nav-section" role="group" aria-label="Legacy versions">
+            <div class="mobile-nav-section">
               <p class="eyebrow mobile-nav-heading">Legacy versions</p>
               <a v-for="version in legacyVersions" :key="version.label" :href="version.href" target="_blank" rel="noopener noreferrer" @click="open = false">{{ version.label }} <ArrowUpRight :size="18" aria-hidden="true" /></a>
             </div>

@@ -26,12 +26,12 @@ const base = import.meta.env.BASE_URL
               <component :is="icons[project.category]" class="preview-icon" :size="36" :stroke-width="1" />
               <span class="preview-art-label">{{ project.category === 'music' ? 'Press play. Tune in.' : 'An idea, made real.' }}</span>
             </div>
-            <span class="preview-action"><Play v-if="project.category === 'music'" :size="15" aria-hidden="true" /><Expand v-else :size="15" aria-hidden="true" /><span>{{ project.category === 'music' ? 'Listen' : 'Preview' }}</span></span>
+            <span class="preview-action" aria-hidden="true"><Play v-if="project.category === 'music'" :size="15" aria-hidden="true" /><Expand v-else :size="15" aria-hidden="true" /><span>{{ project.category === 'music' ? 'Listen' : 'Preview' }}</span></span>
           </button>
         </DialogTrigger>
         <DialogContent class="project-dialog" :style="{ '--project-color': project.color }">
           <div class="dialog-heading"><DialogTitle>{{ project.name }}</DialogTitle><DialogDescription>{{ project.description }}</DialogDescription></div>
-          <div v-if="open && project.embed" class="dialog-stage"><iframe class="music-player" :src="project.embed" :title="`${project.name} music player`" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+          <iframe v-if="open && project.embed" class="music-player" :src="project.embed" :title="`${project.name} music player`" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
           <div v-else-if="project.image && !failed" class="dialog-stage"><img class="full-preview" :src="base + project.image" :alt="`${project.name} full-size preview`" @error="failed = true" /></div>
           <div v-else class="missing-preview"><component :is="icons[project.category]" :size="40" :stroke-width="1" aria-hidden="true" /><p>No preview available. Explore the project below.</p></div>
           <Button as-child variant="outline" class="dialog-project-link"><a :href="project.repo" target="_blank" rel="noopener noreferrer">Open project <ArrowUpRight :size="16" aria-hidden="true" /></a></Button>

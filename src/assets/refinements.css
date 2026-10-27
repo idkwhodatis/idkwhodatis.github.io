@@ -161,31 +161,16 @@ body { font-size: 17px; line-height: 1.65; }
 }
 .preview-action {
   font-size: 14px;
-  gap: 0;
+  gap: 7px;
   padding: 8px 11px;
   background: rgb(8 8 10 / 88%);
   border-color: rgb(255 255 255 / 16%);
   box-shadow: 0 4px 14px rgb(0 0 0 / 45%);
-  transition: border-color .25s ease, background-color .25s ease, padding .25s ease;
-}
-.preview-action span {
-  display: inline-block;
-  max-width: 0;
-  opacity: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  margin-left: 0;
-  transition: max-width .28s var(--reveal-easing), opacity .22s ease, margin-left .28s var(--reveal-easing);
+  transition: border-color .25s ease, background-color .25s ease;
 }
 .card-preview:hover .preview-action, .card-preview:focus-visible .preview-action {
   border-color: color-mix(in srgb, var(--project-color) 50%, rgb(255 255 255 / 20%));
   background: rgb(12 12 15 / 94%);
-}
-.card-preview:hover .preview-action span, .card-preview:focus-visible .preview-action span {
-  display: inline-block;
-  max-width: 80px;
-  opacity: 1;
-  margin-left: 7px;
 }
 .preview-art-label { font-size: 14px; }
 .project-content { padding: 24px; }
